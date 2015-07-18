@@ -1,0 +1,9 @@
+c:\users\uzi\documents\visual studio 2015\Projects\UserInfo\UserInfo\bin\Debug\UserInfo.exe.config
+c:\users\uzi\documents\visual studio 2015\Projects\UserInfo\UserInfo\bin\Debug\UserInfo.exe
+c:\users\uzi\documents\visual studio 2015\Projects\UserInfo\UserInfo\bin\Debug\UserInfo.pdb
+c:\users\uzi\documents\visual studio 2015\Projects\UserInfo\UserInfo\obj\Debug\UserInfo.csprojResolveAssemblyReference.cache
+c:\users\uzi\documents\visual studio 2015\Projects\UserInfo\UserInfo\obj\Debug\UserInfo.Main.resources
+c:\users\uzi\documents\visual studio 2015\Projects\UserInfo\UserInfo\obj\Debug\UserInfo.Properties.Resources.resources
+c:\users\uzi\documents\visual studio 2015\Projects\UserInfo\UserInfo\obj\Debug\UserInfo.csproj.GenerateResource.Cache
+c:\users\uzi\documents\visual studio 2015\Projects\UserInfo\UserInfo\obj\Debug\UserInfo.exe
+c:\users\uzi\documents\visual studio 2015\Projects\UserInfo\UserInfo\obj\Debug\UserInfo.pdb
