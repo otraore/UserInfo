@@ -39,28 +39,18 @@ namespace UserInfo
         {
             string username = SearchTxt.Text;
 
-            if(validate(username))
+            if (Validate(username))
                 GetUserInfo(SearchTxt.Text);
             else
                 MessageBox.Show("Please check your input", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        public async Task<Image> getAvatarAsync(string username)
+        public async Task<Image> GetAvatarAsync(string username)
         {
-            try
-            {
-                var request = WebRequest.Create(
-                    string.Format("http://www.habbo.com/habbo-imaging/avatarimage?user={0}", username));
-                using (var response = request.GetResponse())
-                using (var stream = response.GetResponseStream())
-                {
-                    return Image.FromStream(stream);
-                }
-            }
-            catch (Exception e) { MessageBox.Show(e.ToString()); return null; }
+             return await Task<Image>.Factory.StartNew(() => GetAvatar(username));
         }
 
-        public Image getAvatar(string username)
+        public Image GetAvatar(string username)
         {
             try
             {
@@ -81,68 +71,49 @@ namespace UserInfo
             {
                 string response = await _client.GetStringAsync(string.Format(PROFILE_REQUEST_FORMAT, Username));
                 User user = User.fromJSON(response);
-                UpdateInfo(user); 
+                UpdateInfo(user);
             }
-            catch (Exception) { MessageBox.Show("Error connecting to the habbo API, this is most likely because the username you specified does not exist",
-                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);}       
+            catch (Exception)
+            {
+                MessageBox.Show("Error connecting to the habbo API, this is most likely because the username you specified does not exist", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public async void UpdateInfo(User user)
         {
-            try
-            {
-                UserInfoData.Rows.Clear();
-                Image img = await getAvatarAsync(user.Name);
-                if (img != null)
-                    AvatarImg.Image = img;
+            UserInfoData.Rows.Clear();
+            Image img = await GetAvatarAsync(user.Name);
+            if (img != null)
+                AvatarImg.Image = img;
 
-                PropertyInfo[] props = typeof(User).GetProperties();
-                foreach (PropertyInfo prop in props)
+            PropertyInfo[] props = typeof(User).GetProperties();
+            foreach (PropertyInfo prop in props)
+            {
+                UserInfoData.Rows.Add(prop.Name, prop.GetValue(user));
+            }
+            if (user.SelectedBadges.Count > 0)
+            {
+                for (int i = 0; i < user.SelectedBadges.Count; i++)
                 {
-                    UserInfoData.Rows.Add(prop.Name, prop.GetValue(user));
-                }
-                if(user.SelectedBadges.Count > 0)
-                {
-                    int i = 0;
-                    while(i < user.SelectedBadges.Count)
-                    {
-                        setImage(user.SelectedBadges[i].getBadgeImage(), i);
-                        i++;
-                    }
+                    SetImage(user.SelectedBadges[i].getBadgeImage(), i);
                 }
             }
-            catch (Exception e) { MessageBox.Show(e.ToString());}
-            
             
         }
 
-        public void setImage (Image img, int count)
+        public void SetImage(Image img, int count)
         {
-            try
-            {
-            _badgeImgs[count].Image = img;             
-            }
-            catch(Exception e)
-            {
-                MessageBox.Show(e.ToString());
-            }
+            _badgeImgs[count].Image = img;
         }
 
         private void UpdateImg_Click(object sender, EventArgs e)
         {
-            AvatarImg.Image = getAvatar(SearchTxt.Text);
+            AvatarImg.Image = GetAvatar(SearchTxt.Text);
         }
 
-        public bool validate(string input)
+        public bool Validate(string input)
         {
-            if(!string.IsNullOrWhiteSpace(input))
-            {
-                return true;
-            } 
-            else
-            {
-                return false;
-            }
+            return !string.IsNullOrWhiteSpace(input);
         }
 
         private void githubRepo_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
