@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
-using System.Net;
+using System.Net.Http;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 
 namespace UserInfo
 {
@@ -23,15 +24,10 @@ namespace UserInfo
             );
         }
 
-        public Image getBadgeImage()
+        public async Task<Image> getBadgeImage()
         {
-            var request = WebRequest.Create(
-                string.Format("http://images.habbo.com/c_images/album1584/{0}.gif", Code));
-            using (var response = request.GetResponse())
-            using (var stream = response.GetResponseStream())
-            {
-                return Image.FromStream(stream);
-            }
+            using (HttpClient client = new HttpClient())
+                return Image.FromStream(await client.GetStreamAsync(string.Format("http://images.habbo.com/c_images/album1584/{0}.gif", Code)));
         }
     }
 }

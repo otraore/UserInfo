@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,8 +15,6 @@ namespace UserInfo
         private HttpClient _client;
 
         private HttpClientHandler _handler;
-
-        private static string PROFILE_REQUEST_FORMAT = "https://www.habbo.com/api/public/users?name={0}";
 
         private PictureBox[] _badgeImgs;
 
@@ -69,7 +66,7 @@ namespace UserInfo
         {
             try
             {
-                string response = await _client.GetStringAsync(string.Format(PROFILE_REQUEST_FORMAT, Username));
+                string response = await _client.GetStringAsync(string.Format(Config.USER_REQUEST_FORMAT, Username));
                 User user = User.fromJSON(response);
                 UpdateInfo(user);
             }
@@ -81,7 +78,7 @@ namespace UserInfo
 
         public async void UpdateInfo(User user)
         {
-            UserInfoData.Rows.Clear();
+            ClearInfo();
             Image img = await GetAvatarAsync(user.Name);
             if (img != null)
                 AvatarImg.Image = img;
@@ -95,10 +92,19 @@ namespace UserInfo
             {
                 for (int i = 0; i < user.SelectedBadges.Count; i++)
                 {
-                    SetImage(user.SelectedBadges[i].getBadgeImage(), i);
+                    SetImage(await user.SelectedBadges[i].getBadgeImage(), i);
                 }
             }
             
+        }
+
+        public void ClearInfo()
+        {
+            UserInfoData.Rows.Clear();
+            foreach (PictureBox box in _badgeImgs)
+            {
+                box.Image = null;
+            }
         }
 
         public void SetImage(Image img, int count)
